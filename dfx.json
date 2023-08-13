@@ -1,0 +1,30 @@
+{
+  "canisters": {
+    "ad_exchange_backend": {
+      "candid": "src/ad_exchange_backend/ad_exchange_backend.did",
+      "package": "ad_exchange_backend",
+      "type": "rust"
+    },
+    "ad_exchange_frontend": {
+      "dependencies": [
+        "ad_exchange_backend"
+      ],
+      "frontend": {
+        "entrypoint": "src/ad_exchange_frontend/src/index.html"
+      },
+      "source": [
+        "src/ad_exchange_frontend/assets",
+        "dist/ad_exchange_frontend/"
+      ],
+      "type": "assets"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
