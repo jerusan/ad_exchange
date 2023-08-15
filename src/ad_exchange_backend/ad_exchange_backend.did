@@ -1,3 +1,30 @@
+type AddCampaign = record {
+    "advertiser": principal;
+    "bid": nat64;
+    "category": text;
+    "ad": text;
+    "base_64_img": text;
+};
+
+type CampaignResponseType = record {
+    "id": nat64;
+    "advertiser": principal;
+    "bid": nat64;
+    "category": text;
+    "ad": text;
+    "base_64_img": text;
+};
+
+type Campaign = record {
+    "id": nat64;
+    "advertiser": principal;
+    "bid": nat64;
+    "category": text;
+    "ad": text;
+    "base_64_img": vec nat8;
+};
+
 service : {
-    "greet": (text) -> (text) query;
+    "create_campaign": (AddCampaign) -> ();
+    "get_campaign": (text) -> (CampaignResponseType) query;
 }
