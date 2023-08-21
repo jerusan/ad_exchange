@@ -37,16 +37,20 @@ const AddCampaignForm = () => {
       from_subaccount: [],
       to: to_principal,
       fee: [],
-      amount: 1000,
+      amount: campaign.bid,
       created_at_time: []
     };
     console.log("ledger canister id", ledgerCanisterID);
     console.log('Transfer Args', transferArgs);
-    // let x = await ledgerActor.icrc1_transfer(transferArgs)
-
-    // console.log("ICRC1_transfer", x)
-    let response = await backendActor.create_campaign(campaign);
-    alert(x);
+    let transferResult = await ledgerActor.icrc1_transfer(transferArgs)
+    console.log('ICRC1 Transfer Result', transferResult);
+    if(transferResult.Ok) {
+      let response = await backendActor.create_campaign(campaign);
+      console.log("Campaign created:", response);
+      alert("Create campaign response", response);
+    }else {
+      alert("Transfer failed, campaign not created", transferResult);
+    }
   };
 
   return (
