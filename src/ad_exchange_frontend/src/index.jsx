@@ -1,205 +1,53 @@
 import * as React from "react";
 import { render } from "react-dom";
-import { Principal } from "@dfinity/principal";
-import { ad_exchange_backend } from "../../declarations/ad_exchange_backend/index";
-import Modal from "react-modal";
+import CampaignDetails from "./CampaignDetails";
+import AddCampaignForm from "./AddCampaignForm";
 
-const ImagePopup = ({ imageBase64 }) => {
-  const [isOpen, setIsOpen] = React.useState(false);
+import LoggedOut from "./LoggedOut";
+import { useAuth, AuthProvider } from "./useAuthClient";
+import LoggedIn from "./LoggedIn";
 
+function AuthApp() {
+  const { isAuthenticated } = useAuth();
   return (
     <>
-      <button onClick={() => setIsOpen(true)}>View Image</button>
-
-      <Modal isOpen={isOpen} onRequestClose={() => setIsOpen(false)}>
-        <img src={imageBase64} />
-
-        <button onClick={() => setIsOpen(false)}>Close</button>
-      </Modal>
+      <header id="header">
+        <section id="status" className="toast hidden">
+          <span id="content"></span>
+          <button className="close-button" type="button">
+            <svg
+              aria-hidden="true"
+              className="w-5 h-5"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              ></path>
+            </svg>
+          </button>
+        </section>
+      </header>
+      <main id="pageContent">
+        {isAuthenticated ? <> <LoggedIn /> <Main /> </>: <LoggedOut />}
+      </main>
     </>
   );
-};
-
-const AddCampaignForm = () => {
-  const [inputs, setInputs] = React.useState({});
-
-  const handleChange = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    setInputs((values) => ({ ...values, [name]: value }));
-  };
-
-  const setBase64Image = (base64Image) => {
-    inputs.base64Img = base64Image
-  }
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    const campaign = {
-      advertiser: Principal.fromText(inputs.advertiser),
-      bid: parseInt(inputs.bid, 10),
-      category: inputs.category,
-      ad: inputs.ad,
-      base_64_img: inputs.base64Img,
-    };
-
-    let response = await ad_exchange_backend.create_campaign(campaign);
-    alert(response);
-  };
-
-  return (
-    <>
-      <div>
-        <form onSubmit={handleSubmit}>
-          <label>
-            Advertiser:
-            <input
-              name="advertiser"
-              value={inputs.advertiser || ""}
-              onChange={handleChange}
-            />
-          </label>
-
-          <label>
-            Bid:
-            <input
-              name="bid"
-              type="number"
-              value={inputs.bid || 0}
-              onChange={handleChange}
-            />
-          </label>
-
-          <label>
-            Category:
-            <input
-              name="category"
-              value={inputs.category || ""}
-              onChange={handleChange}
-            />
-          </label>
-
-          <label>
-            Ad:
-            <input name="ad" value={inputs.ad || ""} onChange={handleChange} />
-          </label>
-
-          <label>
-            Image:
-            <ImageUpload onImageConvert={setBase64Image} />
-          </label>
-          <button type="submit">Add Campaign</button>
-        </form>
-      </div>
-    </>
-  );
-};
-
-const CampaignDetails = () => {
-  const [category, setCategory] = React.useState("");
-  const [campaign, setCampaign] = React.useState({});
-
-  const changeCategory = (event) => {
-    const { name, value } = event.target;
-    setCategory(value);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    let adCampaign = await ad_exchange_backend.get_campaign(category);
-
-    setCampaign(adCampaign);
-  };
-
-  return (
-    <>
-      <div>
-        <form onSubmit={handleSubmit}>
-          <label>
-            Category:
-            <input
-              type="text"
-              name="category"
-              value={category}
-              onChange={changeCategory}
-            />
-          </label>
-          <button type="submit"> Get Campaign</button>
-        </form>
-      </div>
-      <div>
-        <h2>Campaign Details</h2>
-        <form onSubmit={handleSubmit}>
-          <label>
-            Advertiser:
-            <input
-              name="advertiser"
-              readOnly
-              value={campaign.advertiser || ""}
-            />
-          </label>
-
-          <label>
-            Bid:
-            <input
-              name="bid"
-              type="number"
-              readOnly
-              value={parseInt(campaign.bid, 10) || 0}
-            />
-          </label>
-
-          <label>
-            Category:
-            <input name="category" readOnly value={campaign.category || ""} />
-          </label>
-
-          <label>
-            Ad:
-            <input name="ad" readOnly value={campaign.ad || ""} />
-          </label>
-          <ImagePopup imageBase64={campaign.base_64_img} />
-        </form>
-      </div>
-    </>
-  );
-};
-
-const ImageUpload = ({ onImageConvert }) => {
-  const [base64, setBase64] = React.useState(null);
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    let file = e.dataTransfer.files[0];
-    convertToBase64(file);
-  };
-
-  const handleChange = (e) => {
-    let file = e.target.files[0];
-    convertToBase64(file);
-  };
-
-  const convertToBase64 = (file) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      setBase64(reader.result);
-      onImageConvert(reader.result);
-    };
-  };
-
-  return (
-    <div onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
-      <p>Add Advert:</p>
-
-      <input type="file" onChange={handleChange} />
-    </div>
-  );
-};
+}
 
 const App = () => {
+  return (
+    <AuthProvider>
+      <AuthApp />
+    </AuthProvider>
+  );
+}
+
+
+const Main = () => {
   const [userPage, setUserPage] = React.useState(true);
   return (
     <div style={{ fontSize: "30px" }}>

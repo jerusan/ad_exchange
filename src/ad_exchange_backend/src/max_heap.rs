@@ -74,7 +74,7 @@ impl MaxHeap {
     }
 }
 
-fn test() {
+fn _test() {
     let mut min_heap = MaxHeap::new();
 
     min_heap.push(CampaignIdBidPair {
