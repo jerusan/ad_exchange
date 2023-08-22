@@ -19,8 +19,7 @@ const AddCampaignForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const campaign = {
-      advertiser: Principal.fromText(inputs.advertiser),
+    const campaign = {      
       bid: parseInt(inputs.bid, 10),
       category: inputs.category,
       ad: inputs.ad,
@@ -58,15 +57,6 @@ const AddCampaignForm = () => {
       <div>
 
         <form onSubmit={handleSubmit}>
-          <label>
-            Advertiser:
-            <input
-              name="advertiser"
-              value={inputs.advertiser || ""}
-              onChange={handleChange}
-            />
-          </label>
-
           <label>
             Bid:
             <input

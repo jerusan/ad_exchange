@@ -33,12 +33,22 @@
     js-sha256 "^0.9.0"
     tweetnacl "^1.0.1"
 
+"@dfinity/ledger@^0.0.12":
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/@dfinity/ledger/-/ledger-0.0.12.tgz#2df36603051e8dfd020b017e4a54bdef484ba2d8"
+  integrity sha512-HoSY28+V3brYqqo81eebv7YtSf4In7LGGBOFSzfphI0Ma8sCDlaOhSN7YoORATW5LFWAGM0h9hWDJDWYk3crNw==
+
 "@dfinity/principal@^0.18.1":
   version "0.18.1"
   resolved "https://registry.npmjs.org/@dfinity/principal/-/principal-0.18.1.tgz"
   integrity sha512-xeV+5zV7VQRT2xJTbXW4IDra1urEcchuwuKFTU/ERcJWBWEk8chsZcd6DBc8SPq83xRgXW2ZTVVSOZR8NKaVoQ==
   dependencies:
     js-sha256 "^0.9.0"
+
+"@dfinity/utils@^0.0.19":
+  version "0.0.19"
+  resolved "https://registry.yarnpkg.com/@dfinity/utils/-/utils-0.0.19.tgz#9bca386400c29e4b92f93eea1fbac285ca3581e3"
+  integrity sha512-NrVrq5qBwm8NaDWhdT13Qxo9o6nblpCLrGVrOUgJFD5YdnEN+b57d/5McMcJDQgejjyHKk6eIYmpFj/FDKNcSQ==
 
 "@discoveryjs/json-ext@^0.5.0":
   version "0.5.7"
@@ -2124,6 +2134,13 @@ react-modal@3.16.1:
     prop-types "^15.7.2"
     react-lifecycles-compat "^3.0.0"
     warning "^4.0.3"
+
+react-visibility-sensor@^6.1.2:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/react-visibility-sensor/-/react-visibility-sensor-5.1.1.tgz#5238380960d3a0b2be0b7faddff38541e337f5a9"
+  integrity sha512-cTUHqIK+zDYpeK19rzW6zF9YfT4486TIgizZW53wEZ+/GPBbK7cNS0EHyJVyHYacwFEvvHLEKfgJndbemWhB/w==
+  dependencies:
+    prop-types "^15.7.2"
 
 react@^18.2.0:
   version "18.2.0"
