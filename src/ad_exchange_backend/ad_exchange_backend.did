@@ -1,5 +1,4 @@
 type AddCampaign = record {
-    "advertiser": principal;
     "bid": nat64;
     "category": text;
     "ad": text;
@@ -8,20 +7,12 @@ type AddCampaign = record {
 
 type CampaignResponseType = record {
     "id": nat64;
-    "advertiser": principal;
     "bid": nat64;
+    "advertiser": principal;
+    "challenge": text;
     "category": text;
     "ad": text;
     "base_64_img": text;
-};
-
-type Campaign = record {
-    "id": nat64;
-    "advertiser": principal;
-    "bid": nat64;
-    "category": text;
-    "ad": text;
-    "base_64_img": vec nat8;
 };
 
 type Tokens = record {
@@ -51,4 +42,5 @@ service : () -> {
     "mint": (nat64, opt text) -> (TransferResult);
     "create_campaign": (AddCampaign) -> ();
     "get_campaign": (text) -> (CampaignResponseType) query;
+    "verify_ad_interaction": (nat64, text) -> ();
 }

@@ -9,6 +9,7 @@ dependencies = [
  "base64",
  "candid",
  "chrono",
+ "hex",
  "ic-cdk",
  "ic-cdk-macros",
  "ic-ledger-types",

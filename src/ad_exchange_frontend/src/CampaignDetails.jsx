@@ -7,6 +7,7 @@ const ImagePopup = ({ campaignID, challenge, imageBase64 }) => {
   const { backendActor, identity } = useAuth();
 
   const sendAdInteractionProof = async () => {
+    // TODO: Ad interaction proof logic
     const message = Buffer.from(challenge);
     const messageSigned = await identity.sign(message).then(Buffer.from)
     console.log('signature', messageSigned.toString('hex'))
