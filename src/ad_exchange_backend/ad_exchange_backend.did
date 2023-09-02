@@ -5,11 +5,27 @@ type AddCampaign = record {
     "base_64_img": text;
 };
 
+type Coordinate = record {
+    "x": nat32;
+    "y": nat32;
+};
+
+type Pixel = record {
+    "r": nat8;
+    "g": nat8;
+    "b": nat8;
+    "a": nat8;
+};
+
+type SampledImgData = record {
+    "coordinate": Coordinate;
+    "pixel": Pixel;
+};
+
 type CampaignResponseType = record {
     "id": nat64;
     "bid": nat64;
     "advertiser": principal;
-    "challenge": text;
     "category": text;
     "ad": text;
     "base_64_img": text;
@@ -42,5 +58,5 @@ service : () -> {
     "mint": (nat64, opt text) -> (TransferResult);
     "create_campaign": (AddCampaign) -> ();
     "get_campaign": (text) -> (CampaignResponseType) query;
-    "verify_ad_interaction": (nat64, text) -> ();
+    "verify_ad_interaction": (nat64, vec SampledImgData) -> ();
 }

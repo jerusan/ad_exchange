@@ -27,7 +27,7 @@ const AddCampaignForm = () => {
     };
 
     const to_principal = {
-      owner: Principal.fromText("be2us-64aaa-aaaaa-qaabq-cai"),
+      owner: Principal.fromText("bkyz2-fmaaa-aaaaa-qaaaq-cai"),
       subaccount: [], 
     }
 

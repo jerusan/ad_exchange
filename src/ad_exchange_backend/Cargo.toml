@@ -15,8 +15,10 @@ ic-cdk-macros = "0.7.1"
 ic-ledger-types = "0.7.0"
 ic0 = "0.18.11"
 serde = { version = "1.0", features = ["derive"] }
-lazy_static = "1.4.0"
-
 hex = "0.4.3"
-base64 = "0.21.2"
-chrono = { version = "0.4", features = ["serde"] }
+base64 = "0.21.3"
+
+[dependencies.image]
+version = "0.24.7"  
+default-features = false
+features = ["png"]
