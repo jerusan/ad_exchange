@@ -1,33 +1,50 @@
-import React from "react";
+import React, { useState } from "react";
 import { useAuth } from "./useAuthClient";
+import AddCampaignForm from "./AddCampaignForm";
+import CampaignDetails from "./CampaignDetails";
+import "./LoggedIn.css";
 
-const whoamiStyles = {
-    border: "1px solid #1a1a1a",
-    marginBottom: "1rem",
-};
-
-function LoggedIn() {
-    const [principalVal, setPrincipal] = React.useState("");
-
-    const { logout, principal } = useAuth();
-
-    React.useEffect(() => {
-        setPrincipal(principal);
-    }, [principal]);
+const LoggedIn = () => {
+    const { actor, logout } = useAuth();
+    const [activeTab, setActiveTab] = useState('search'); // 'search' or 'create'
 
     return (
-        <>
-            <div className="container">
-                <h1>Internet Identity Client</h1>
-                <h2>You are authenticated!</h2>
-                <h3>Your identity: </h3>
-                <input type="text" value={principalVal} placeholder="ID" style={whoamiStyles} readOnly />
-            </div>
-            <button id="logout" onClick={logout}>
-                log out
-            </button>
-        </>
+        <div className="app-container">
+            <header className="app-header">
+                <div className="header-content">
+                    <h1>Ad Exchange Platform</h1>
+                    <button onClick={logout} className="logout-button">
+                        Logout
+                    </button>
+                </div>
+            </header>
+
+            <main className="main-content">
+                <div className="tabs">
+                    <button 
+                        className={`tab-button ${activeTab === 'search' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('search')}
+                    >
+                        Search Campaigns
+                    </button>
+                    <button 
+                        className={`tab-button ${activeTab === 'create' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('create')}
+                    >
+                        Create Campaign
+                    </button>
+                </div>
+
+                <div className="tab-content">
+                    {activeTab === 'search' ? (
+                        <CampaignDetails />
+                    ) : (
+                        <AddCampaignForm />
+                    )}
+                </div>
+            </main>
+        </div>
     );
-}
+};
 
 export default LoggedIn;
