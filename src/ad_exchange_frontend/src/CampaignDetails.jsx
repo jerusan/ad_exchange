@@ -1,30 +1,57 @@
 import * as React from "react";
 import { useAuth } from "./useAuthClient";
+import "./CampaignDetails.css";
 
 const CampaignDetails = () => {
   const [category, setCategory] = React.useState("");
   const [campaign, setCampaign] = React.useState({});
+  const [status, setStatus] = React.useState({ message: '', isError: false });
 
   const { backendActor } = useAuth();
 
   const changeCategory = (event) => {
-    const { _, value } = event.target;
-    setCategory(value);
+    setCategory(event.target.value);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setStatus({ message: 'Searching...', isError: false });
 
-    let adCampaign = await backendActor.get_campaign(category);
-    setCampaign(adCampaign);
+    try {
+      let adCampaign = await backendActor.get_campaign(category);
+      console.log('adCampaign', adCampaign);
+      
+      // Convert Principal to string if it exists
+      if (adCampaign.advertiser) {
+        adCampaign = {
+          ...adCampaign,
+          advertiser: adCampaign.advertiser.toString()
+        };
+      }
+      
+      if (Object.keys(adCampaign).length === 0) {
+        setStatus({ message: 'No campaign found for this category', isError: true });
+      } else {
+        setStatus({ message: '', isError: false });
+      }
+      
+      setCampaign(adCampaign);
+    } catch (error) {
+      console.error('Error fetching campaign:', error);
+      setStatus({ 
+        message: 'Error fetching campaign details', 
+        isError: true 
+      });
+    }
   };
 
   const canvasRef = React.useRef(null);
 
-  React.useEffect( () =>  {
+  React.useEffect(() => {
+    if (!campaign.base_64_img) return;
 
     const img = new Image();
-    img.src = campaign.base_64_img
+    img.src = campaign.base_64_img;
 
     img.onload = async () => {
       const canvas = canvasRef.current;
@@ -41,78 +68,84 @@ const CampaignDetails = () => {
         const pixel = ctx.getImageData(x, y, 1, 1).data;
 
         const sampledData = {
-          coordinate: {
-            x: x,
-            y: y
-          },
-          pixel: {
-            r: pixel[0],
-            g: pixel[1],
-            b: pixel[2],
-            a: pixel[3]
-          }
-        }
-        sampledPixels.push(sampledData)
+          coordinate: { x, y },
+          pixel: { r: pixel[0], g: pixel[1], b: pixel[2], a: pixel[3] }
+        };
+        sampledPixels.push(sampledData);
       }
 
-      // Send proof to backend
       console.log('sampledPixels', sampledPixels);
       await backendActor.verify_ad_interaction(campaign.id, sampledPixels);
     };
-
   }, [campaign]);
 
   return (
-    <>
-      <div>
-        <form onSubmit={handleSubmit}>
-          <label>
-            Category:
-            <input
-              type="text"
-              name="category"
-              value={category}
-              onChange={changeCategory}
-            />
-          </label>
-          <button type="submit"> Get Campaign</button>
+    <div className="campaign-details-container">
+      <div className="search-section">
+        <h2>Search Campaign</h2>
+        <form onSubmit={handleSubmit} className="search-form">
+          <div className="form-group">
+            <label htmlFor="category">Category:</label>
+            <div className="search-input-group">
+              <input
+                id="category"
+                type="text"
+                name="category"
+                value={category}
+                onChange={changeCategory}
+                className="form-control"
+                placeholder="Enter category to search"
+              />
+              <button type="submit" className="search-button">
+                Search
+              </button>
+            </div>
+          </div>
         </form>
+        
+        {status.message && (
+          <div className={`status-message ${status.isError ? 'error' : 'success'}`}>
+            {status.message}
+          </div>
+        )}
       </div>
-      <div>
-        <h2>Campaign Details</h2>
-        <form onSubmit={handleSubmit}>
-          <label>
-            Advertiser:
-            <input
-              name="advertiser"
-              readOnly
-              value={campaign.advertiser || ""}
-            />
-          </label>
 
-          <label>
-            Bid:
-            <input
-              name="bid"
-              type="number"
-              readOnly
-              value={parseInt(campaign.bid, 10) || 0}
-            />
-          </label>
+      {Object.keys(campaign).length > 0 && !status.isError && (
+        <div className="details-section">
+          <h2>Campaign Details</h2>
+          <div className="campaign-grid">
+            <div className="info-group">
+              <label>Advertiser</label>
+              <div className="info-value">{campaign.advertiser || "N/A"}</div>
+            </div>
 
-          <label>
-            Category:
-            <input name="category" readOnly value={campaign.category || ""} />
-          </label>
+            <div className="info-group">
+              <label>Bid Amount</label>
+              <div className="info-value">
+                {parseInt(campaign.bid, 10) || 0} tokens
+              </div>
+            </div>
 
-          <label>
-            Ad:
-            <input name="ad" readOnly value={campaign.ad || ""} />
-          </label>
-          <canvas ref={canvasRef} />
-        </form>
-      </div>
-    </>
+            <div className="info-group">
+              <label>Category</label>
+              <div className="info-value">{campaign.category || "N/A"}</div>
+            </div>
+
+            <div className="info-group">
+              <label>Advertisement</label>
+              <div className="info-value">{campaign.ad || "N/A"}</div>
+            </div>
+          </div>
+
+          {campaign.base_64_img && (
+            <div className="canvas-container">
+              <h3>Advertisement Image</h3>
+              <canvas ref={canvasRef} className="ad-canvas" />
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 };
 

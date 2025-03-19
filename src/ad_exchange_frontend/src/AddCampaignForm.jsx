@@ -5,6 +5,7 @@ import "./AddCampaignForm.css";  // We'll create this file next
 
 const AddCampaignForm = () => {
   const [inputs, setInputs] = React.useState({});
+  const [status, setStatus] = React.useState({ message: '', isError: false });
   const { ledgerActor, ledgerCanisterID, backendActor } = useAuth();
 
   const handleChange = (event) => {
@@ -19,43 +20,71 @@ const AddCampaignForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setStatus({ message: '', isError: false });
 
-    const campaign = {      
-      bid: parseInt(inputs.bid, 10),
-      category: inputs.category,
-      ad: inputs.ad,
-      base_64_img: inputs.base64Img,
-    };
+    try {
+      if (!inputs.bid || !inputs.category || !inputs.ad || !inputs.base64Img) {
+        throw new Error('Please fill in all fields');
+      }
 
-    const to_principal = {
-      owner: Principal.fromText("bkyz2-fmaaa-aaaaa-qaaaq-cai"),
-      subaccount: [], 
-    }
+      const campaign = {      
+        bid: parseInt(inputs.bid, 10),
+        category: inputs.category,
+        ad: inputs.ad,
+        base_64_img: inputs.base64Img,
+      };
 
-    const transferArgs = {
-      memo: [],
-      from_subaccount: [],
-      to: to_principal,
-      fee: [],
-      amount: campaign.bid,
-      created_at_time: []
-    };
-    console.log("ledger canister id", ledgerCanisterID);
-    console.log('Transfer Args', transferArgs);
-    let transferResult = await ledgerActor.icrc1_transfer(transferArgs)
-    console.log('ICRC1 Transfer Result', transferResult);
-    if(transferResult.Ok) {
-      let response = await backendActor.create_campaign(campaign);
-      console.log("Campaign created:", response);
-      alert("Create campaign response", response);
-    }else {
-      alert("Transfer failed, campaign not created", transferResult);
+      const to_principal = {
+        owner: Principal.fromText("bkyz2-fmaaa-aaaaa-qaaaq-cai"),
+        subaccount: [], 
+      }
+
+      const transferArgs = {
+        memo: [],
+        from_subaccount: [],
+        to: to_principal,
+        fee: [],
+        amount: campaign.bid,
+        created_at_time: []
+      };
+
+      setStatus({ message: 'Processing transfer...', isError: false });
+      
+      let transferResult = await ledgerActor.icrc1_transfer(transferArgs);
+      
+      if ('Ok' in transferResult) {
+        setStatus({ message: 'Creating campaign...', isError: false });
+        let response = await backendActor.create_campaign(campaign);
+        setStatus({ 
+          message: 'Campaign created successfully!', 
+          isError: false 
+        });
+        
+        // Clear form
+        setInputs({});
+        
+      } else {
+        throw new Error('Transfer failed: ' + JSON.stringify(transferResult.Err));
+      }
+      
+    } catch (error) {
+      setStatus({ 
+        message: `Error: ${error.message || 'Something went wrong'}`, 
+        isError: true 
+      });
     }
   };
 
   return (
     <div className="campaign-form-container">
       <h2>Create New Campaign</h2>
+      
+      {status.message && (
+        <div className={`status-message ${status.isError ? 'error' : 'success'}`}>
+          {status.message}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="campaign-form">
         <div className="form-group">
           <label htmlFor="bid">Bid Amount:</label>
