@@ -1,6 +1,7 @@
 import { Principal } from "@dfinity/principal";
 import { useAuth } from "./useAuthClient";
 import * as React from "react";
+import "./AddCampaignForm.css";  // We'll create this file next
 
 const AddCampaignForm = () => {
   const [inputs, setInputs] = React.useState({});
@@ -53,47 +54,63 @@ const AddCampaignForm = () => {
   };
 
   return (
-    <>
-      <div>
+    <div className="campaign-form-container">
+      <h2>Create New Campaign</h2>
+      <form onSubmit={handleSubmit} className="campaign-form">
+        <div className="form-group">
+          <label htmlFor="bid">Bid Amount:</label>
+          <input
+            id="bid"
+            name="bid"
+            type="number"
+            value={inputs.bid || 0}
+            onChange={handleChange}
+            className="form-control"
+            min="0"
+          />
+        </div>
 
-        <form onSubmit={handleSubmit}>
-          <label>
-            Bid:
-            <input
-              name="bid"
-              type="number"
-              value={inputs.bid || 0}
-              onChange={handleChange}
-            />
-          </label>
+        <div className="form-group">
+          <label htmlFor="category">Category:</label>
+          <input
+            id="category"
+            name="category"
+            value={inputs.category || ""}
+            onChange={handleChange}
+            className="form-control"
+            placeholder="e.g., Technology, Fashion, Food"
+          />
+        </div>
 
-          <label>
-            Category:
-            <input
-              name="category"
-              value={inputs.category || ""}
-              onChange={handleChange}
-            />
-          </label>
+        <div className="form-group">
+          <label htmlFor="ad">Ad Text:</label>
+          <textarea
+            id="ad"
+            name="ad"
+            value={inputs.ad || ""}
+            onChange={handleChange}
+            className="form-control"
+            placeholder="Enter your ad text here"
+            rows="3"
+          />
+        </div>
 
-          <label>
-            Ad:
-            <input name="ad" value={inputs.ad || ""} onChange={handleChange} />
-          </label>
+        <div className="form-group">
+          <label>Advertisement Image:</label>
+          <ImageUpload onImageConvert={setBase64Image} />
+        </div>
 
-          <label>
-            Image:
-            <ImageUpload onImageConvert={setBase64Image} />
-          </label>
-          <button type="submit">Add Campaign</button>
-        </form>
-      </div>
-    </>
+        <button type="submit" className="submit-button">
+          Create Campaign
+        </button>
+      </form>
+    </div>
   );
 };
 
 const ImageUpload = ({ onImageConvert }) => {
   const [base64, setBase64] = React.useState(null);
+  const [isDragging, setIsDragging] = React.useState(false);
 
   const handleDrop = (e) => {
     e.preventDefault();
@@ -116,10 +133,35 @@ const ImageUpload = ({ onImageConvert }) => {
   };
 
   return (
-    <div onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
-      <p>Add Advert:</p>
-
-      <input type="file" onChange={handleChange} />
+    <div 
+      className={`image-upload-container ${isDragging ? 'dragging' : ''}`}
+      onDragOver={(e) => {
+        e.preventDefault();
+        setIsDragging(true);
+      }}
+      onDragLeave={() => setIsDragging(false)}
+      onDrop={(e) => {
+        setIsDragging(false);
+        handleDrop(e);
+      }}
+    >
+      <div className="upload-area">
+        {base64 ? (
+          <div className="preview">
+            <img src={base64} alt="Preview" className="image-preview" />
+          </div>
+        ) : (
+          <div className="upload-prompt">
+            <p>Drag and drop an image here, or</p>
+            <input
+              type="file"
+              onChange={handleChange}
+              accept="image/*"
+              className="file-input"
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

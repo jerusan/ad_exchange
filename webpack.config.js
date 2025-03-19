@@ -45,10 +45,10 @@ module.exports = {
   // modules and CSS as described in the "Adding a stylesheet"
   // tutorial, uncomment the following lines:
   module: {
-   rules: [
-     { test: /\.(ts|tsx|jsx)$/, loader: "ts-loader" },
-    //  { test: /\.css$/, use: ['style-loader','css-loader'] }
-   ]
+    rules: [
+      { test: /\.(ts|tsx|jsx)$/, loader: "ts-loader" },
+      { test: /\.css$/, use: ['style-loader','css-loader'] }
+    ]
   },
   plugins: [
     new HtmlWebpackPlugin({
