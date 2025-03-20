@@ -4,24 +4,26 @@ body {
 }
 
 .campaign-details-container {
-  max-width: 1000px;
-  margin: 2rem auto;
-  padding: 1rem;
+  display: grid;
+  grid-template-columns: minmax(250px, 300px) 1fr;
+  gap: 2rem;
+  align-items: start;
 }
 
-.search-section,
+.search-section {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  position: sticky;
+  top: 100px; /* Accounts for header height */
+}
+
 .details-section {
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
   padding: 2rem;
-  margin-bottom: 2rem;
-  transition: transform 0.2s ease;
-}
-
-.search-section:hover,
-.details-section:hover {
-  transform: translateY(-2px);
 }
 
 h2 {
@@ -41,8 +43,8 @@ h3 {
 
 /* Search form styles */
 .search-form {
-  max-width: 600px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
 }
 
 .form-group {
@@ -58,13 +60,8 @@ h3 {
 }
 
 .search-input-group {
-  display: flex;
-  gap: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  border-radius: 8px;
-  padding: 0.25rem;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .form-control {
@@ -84,6 +81,7 @@ h3 {
 }
 
 .search-button {
+  width: 100%;
   background-color: #3182ce;
   color: white;
   padding: 0.875rem 1.5rem;
@@ -107,9 +105,8 @@ h3 {
 /* Campaign details grid */
 .campaign-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin-top: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
 }
 
 .info-group {
@@ -161,7 +158,7 @@ h3 {
 
 /* Status messages */
 .status-message {
-  margin: 1.5rem 0;
+  margin: 1rem 0;
   padding: 1rem 1.5rem;
   border-radius: 8px;
   text-align: center;
@@ -195,24 +192,19 @@ h3 {
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .campaign-details-container {
-    padding: 1rem;
-  }
-
-  .search-section,
-  .details-section {
-    padding: 1.5rem;
-  }
-
-  .campaign-grid {
     grid-template-columns: 1fr;
   }
 
+  .search-section {
+    position: static;
+    margin-bottom: 1rem;
+  }
+
   .search-input-group {
-    flex-direction: column;
-    gap: 0.75rem;
+    flex-direction: row;
   }
 
   .search-button {
-    width: 100%;
+    width: auto;
   }
 } 
